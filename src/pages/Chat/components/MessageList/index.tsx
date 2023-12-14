@@ -12,7 +12,7 @@ type ListItem = {
 };
 
 export default function MessageList() {
-	const messageListDom = useRef();
+	const messageListDom = useRef<HTMLDivElement>(null);
 	const [list, setList] = useState<ListItem[]>([]);
 
 	// 创建broadcastChannel
@@ -42,16 +42,17 @@ export default function MessageList() {
 	}
 
 	// 滚动到顶部加载更多信息
-	function loadMoreData() {
-		setList([...list, ...list]);
-		const height = messageListDom.current.scrollHeight;
-		setTimeout(() => {
-			messageListDom.current.scrollTop = messageListDom.current.scrollHeight - height - 50;
-		}, 0);
-	}
+	// function loadMoreData() {
+	// 	setList([...list, ...list]);
+	// 	const height = messageListDom.current.scrollHeight;
+	// 	setTimeout(() => {
+	// 		messageListDom.current.scrollTop = messageListDom.current.scrollHeight - height - 50;
+	// 	}, 0);
+	// }
 
 	useEffect(() => {
-		messageListDom.current.scrollTop = messageListDom.current.scrollHeight;
+		const dom = messageListDom.current as HTMLDivElement;
+		dom.scrollTop = dom.scrollHeight;
 		// messageListDom.current.onscroll = function () {
 		// 	// 判断是否滚动到页面顶部
 		// 	console.dir(messageListDom.current);

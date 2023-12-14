@@ -1,14 +1,14 @@
 // eventProxy.js
 'use strict';
 const eventProxy = {
-  onObj: {} as { [key: string]: ((arg0: unknown) => void)[] },
-  on: function (key: string, fn: (arg0: unknown) => void) {
+  onObj: {} as { [key: string]: (any)[] },
+  on: function (key: string, fn: any) {
     if (this.onObj[key] === undefined) {
       this.onObj[key] = [];
     }
     this.onObj[key].push(fn);
   },
-  trigger: function (key: string, ...args: unknown[]) {
+  trigger: function (key: string, ...args: any) {
     if (!key) {
       return false;
     }

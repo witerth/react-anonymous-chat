@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, KeyboardEvent, ChangeEvent } from "react";
 import "./index.less";
 import getUserInfo, { UserInfo } from "@/models/user";
 import { sendMessage } from "@/models/broadcastChannel";
@@ -29,11 +29,11 @@ export default function ChatInput() {
 		eventProxy.trigger("send", param);
 	}
 
-	function handleChange(e: Event) {
-		setMessage((e.target as HTMLInputElement).value);
+	function handleChange(e: ChangeEvent<HTMLTextAreaElement>) {
+		setMessage(e.currentTarget.value);
 	}
 
-	function handleInputKeyDown(e: KeyboardEvent) {
+	function handleInputKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
 		if (e.key === "Enter") {
 			if (!e.shiftKey) {
 				setTimeout(() => {
