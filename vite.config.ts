@@ -8,6 +8,7 @@ export default defineConfig({
     open: true,
     hmr: true,
   },
+  base: "./",
   resolve: {
     alias: [
       { find: '@', replacement: path.resolve(__dirname, 'src') },
