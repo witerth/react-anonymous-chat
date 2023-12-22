@@ -56,6 +56,7 @@ export default function ChatInput() {
 				ref={textareaDom}
 				value={message}
 				rows={6}
+				placeholder="愣着干嘛，聊天啊！！！"
 				style={{ height: 120, resize: "none" }}
 				onChange={handleChange}
 				onKeyDown={handleInputKeyDown}
