@@ -24,7 +24,7 @@ ws.onclose = function (event) {
 };
 //连接异常
 ws.onerror = function (event) {
-	console.log("connect-error：" + event.data);
+	console.log("connect-error：" + event);
 };
 
 export default ws;
