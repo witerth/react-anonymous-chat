@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect, KeyboardEvent, ChangeEvent } from "react";
 import "./index.less";
 import getUserInfo, { UserInfo } from "@/models/user";
-import { sendMessage } from "@/models/broadcastChannel";
-import eventProxy from "@/models/eventProxy";
+// import { sendMessage } from "@/models/broadcastChannel";
+import eventProxy from "@/utils/eventProxy";
 import { Button, Input } from "antd";
+import { send } from "./api";
 
 const { TextArea } = Input;
 
@@ -25,7 +26,8 @@ export default function ChatInput() {
 			message: message.trim()
 		};
 		setMessage("");
-		sendMessage(param);
+		// sendMessage(param);
+		send(param);
 		eventProxy.trigger("send", param);
 	}
 

@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import Item from "./conponents/Item";
-import { getBroadcastChannel } from "@/models/broadcastChannel";
-import { UserInfo } from "@/models/user";
+// import { getBroadcastChannel } from "@/models/broadcastChannel";
+import getUserInfo, { UserInfo } from "@/models/user";
 import "./index.less";
-import eventProxy from "@/models/eventProxy";
+import eventProxy from "@/utils/eventProxy";
+import ws from "@/models/socket";
 
 type ListItem = {
 	message: string;
@@ -16,14 +17,14 @@ export default function MessageList() {
 	const [list, setList] = useState<ListItem[]>([]);
 
 	// 创建broadcastChannel
-	const broadcastChannel = getBroadcastChannel();
-	broadcastChannel.onmessage = handleMessage;
-	function handleMessage(event: MessageEvent) {
-		console.log("接收到 event", event);
-		// TODO: 处理接收到信息后的逻辑
-		setList([...list.map((i, index) => ({ ...i, time: i.time + index })), event.data]);
-		scrollBottom();
-	}
+	// const broadcastChannel = getBroadcastChannel();
+	// broadcastChannel.onmessage = handleMessage;
+	// function handleMessage(event: MessageEvent) {
+	// 	console.log("接收到 event", event);
+	// 	// TODO: 处理接收到信息后的逻辑
+	// 	setList([...list.map((i, index) => ({ ...i, time: i.time + index })), event.data]);
+	// 	scrollBottom();
+	// }
 
 	// 监听当前用户发送信息，添加到信息列表中
 	eventProxy.on("send", (message: ListItem) => {
@@ -40,6 +41,19 @@ export default function MessageList() {
 			});
 		}, 0);
 	}
+
+	const userInfo: UserInfo = getUserInfo();
+
+	ws.onmessage = event => {
+		const msg = JSON.parse(event.data) as ListItem;
+		if (userInfo.userId !== msg.userInfo.userId) {
+			setList([
+				...list.map((i, index) => ({ ...i, time: i.time + index })),
+				JSON.parse(event.data)
+			]);
+			scrollBottom();
+		}
+	};
 
 	// 滚动到顶部加载更多信息
 	// function loadMoreData() {
