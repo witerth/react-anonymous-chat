@@ -5,6 +5,7 @@ import getUserInfo, { UserInfo } from "@/models/user";
 import "./index.less";
 import eventProxy from "@/utils/eventProxy";
 import ws from "@/models/socket";
+import { getHistory } from "./api";
 
 type ListItem = {
 	message: string;
@@ -15,6 +16,7 @@ type ListItem = {
 export default function MessageList() {
 	const messageListDom = useRef<HTMLDivElement>(null);
 	const [list, setList] = useState<ListItem[]>([]);
+	const [hasMore, setHasMore] = useState(true);
 
 	// 创建broadcastChannel
 	// const broadcastChannel = getBroadcastChannel();
@@ -56,26 +58,41 @@ export default function MessageList() {
 	};
 
 	// 滚动到顶部加载更多信息
-	// function loadMoreData() {
-	// 	setList([...list, ...list]);
-	// 	const height = messageListDom.current.scrollHeight;
-	// 	setTimeout(() => {
-	// 		messageListDom.current.scrollTop = messageListDom.current.scrollHeight - height - 50;
-	// 	}, 0);
-	// }
+	function loadMoreData() {
+		if (!hasMore) return;
+		getHistory({
+			time: list[0]?.time || "",
+			userId: list[0]?.userInfo.userId || ""
+		}).then(res => {
+			if (!res) {
+				setHasMore(false);
+				return;
+			}
+			setList([...res, ...list]);
+
+			const height = messageListDom.current!.scrollHeight;
+			setTimeout(() => {
+				messageListDom.current!.scrollTop = messageListDom.current!.scrollHeight - height;
+			}, 0);
+		});
+	}
+
+	useEffect(() => {
+		messageListDom.current!.onscroll = function () {
+			// 判断是否滚动到页面顶部
+			// console.dir(messageListDom.current);
+			if (messageListDom.current!.scrollTop === 0) {
+				// 执行加载更多的操作
+				loadMoreData();
+			}
+		};
+	});
 
 	useEffect(() => {
 		const dom = messageListDom.current as HTMLDivElement;
 		dom.scrollTop = dom.scrollHeight;
-		// messageListDom.current.onscroll = function () {
-		// 	// 判断是否滚动到页面顶部
-		// 	console.dir(messageListDom.current);
-		// 	if (messageListDom.current.scrollTop === 0) {
-		// 		// 执行加载更多的操作
-		// 		loadMoreData();
-		// 	}
-		// };
-	});
+		loadMoreData();
+	}, []);
 
 	return (
 		<div ref={messageListDom} className="message-list">
