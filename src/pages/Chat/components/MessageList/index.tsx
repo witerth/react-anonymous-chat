@@ -11,6 +11,7 @@ type ListItem = {
 	message: string;
 	time: string;
 	userInfo: UserInfo;
+	id?: number;
 };
 
 export default function MessageList() {
@@ -60,11 +61,12 @@ export default function MessageList() {
 	// 滚动到顶部加载更多信息
 	function loadMoreData() {
 		if (!hasMore) return;
+		const limit = 10;
 		getHistory({
-			time: list[0]?.time || "",
-			userId: list[0]?.userInfo.userId || ""
+			id: list[0]?.id || 0,
+			limit
 		}).then(res => {
-			if (!res) {
+			if (res.length < limit) {
 				setHasMore(false);
 				return;
 			}

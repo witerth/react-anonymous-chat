@@ -1,4 +1,4 @@
 import fetchData from "@/utils/require";
 
-export const getHistory = (param: { userId?: string; time?: string }) =>
+export const getHistory = (param: { id?: number; limit?: number }) =>
 	fetchData("/history", "post", param);
